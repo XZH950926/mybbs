@@ -84,6 +84,7 @@ $(function(){
         ev.preventDefault();
         email=$("#inputEmail").val()
         password=$("#inputPassword").val()
+        ischeck=$("#rememberme").prop("checked")
         csrf_token=$("meta[name=csrf_token]").attr("value")
         $.ajax({
             url:"/cms/login/",
@@ -91,6 +92,7 @@ $(function(){
             data:{
                 "email":email,
                 "password":password,
+                "ischeck":ischeck ? '1':'0',
                 "csrf_token":csrf_token
             },
             success:function(data){

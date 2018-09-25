@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    这是cms首页
-</body>
-</html>
+{% extends 'cms/base.html' %}
+{% block title %} 我的CMS管理系统 {% endblock %}
+{% block page_title %} 欢迎来到CMS管理系统{{ super.title}} {% endblock %}
+{% block content %} 这是用来管理前台数据的 {{ super.title}} {% endblock %}

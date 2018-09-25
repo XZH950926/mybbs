@@ -9,8 +9,8 @@ class showResponseInfo():
     fail=400
     argumentErr=401
 
-def resSuccess():
-    return respon(200,"登陆成功").__dict__
+def resSuccess(data=None):
+    return respon(200,"登陆成功",data).__dict__
 def resFail(data):
     return respon(400,"登录失败",data=data).__dict__
 def argumentErr(data):

@@ -1,0 +1,29 @@
+{% extends 'cms/base.html' %}
+{% block title %}CMS后台管理系统{% endblock %}
+{% block head %}
+{% endblock %}
+{% block page_title %}
+个人信息
+{% endblock %}
+{% block content %}
+<table class="table table-condensed">
+    <tbody>
+        <tr>
+            <td>姓名</td>
+            <td>邮箱</td>
+            <td>创建时间</td>
+        </tr>
+        <tr>
+            <td>
+                {{ user.username}}
+            </td>
+             <td>
+                {{ user.email }}
+            </td>
+             <td>
+                {{ user.create_time }}
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}
