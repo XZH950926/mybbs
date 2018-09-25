@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="{{ url_for("static",filename='/common/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for("static",filename='/common/jquery-1.11.1.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for("static",filename="/common/bootstrap.min.css") }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for("static",filename="/cms/login.css") }}">
+    <script src="{{ url_for("static",filename="/cms/login.js") }}"></script>
+</head>
+<body>
+     <div class="container">
+        <div class="card card-container">
+            <img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+            <p id="profile-name" class="profile-name-card"></p>
+            <form class="form-signin">
+                <span id="reauth-email" class="reauth-email"></span>
+                <input type="email" id="inputEmail" class="form-control" placeholder="请输入你的邮箱" required autofocus>
+                <input type="password" id="inputPassword" class="form-control" placeholder="请输入你的密码" required>
+                <div id="remember" class="checkbox">
+                    <label>
+                        <input type="checkbox" value="0"> 记住我
+                    </label>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">登陆</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
