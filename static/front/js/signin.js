@@ -1,0 +1,28 @@
+$(function(){
+    $("#signin_btn").click(function(ev){
+        ev.preventDefault();
+        telephone=$("input[name=telephone]").val();
+        password=$("input[name=password]").val();
+        csrf_token=$("meta[name=csrf_token]").attr("value"),
+        $.ajax({
+            url:"/signin/",
+            type:"post",
+            data:{
+                "telephone":telephone,
+                "password":password,
+                "csrf_token":csrf_token
+            },
+            success:function(data){
+                if(data.code==200)
+                {
+                    xtalert.alertSuccess(data.data)
+                window.location.href="/"
+                }
+               else{
+                    xtalert.alertError(data.data)
+                }
+            }
+        })
+
+    })
+})

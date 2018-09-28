@@ -1,0 +1,30 @@
+$(function(){
+    $("#resetPwdBtn").click(function(ev){
+        ev.preventDefault();
+        password1=$("#exampleInputPassword1").val();
+        password2=$("#exampleInputPassword2").val();
+        password3=$("#exampleInputPassword3").val();
+        csrf_token=$("meta[name=csrf_token]").attr("value");
+        $.ajax({
+            url:"/cms/resetpwd/",
+            type:"post",
+            data:{
+                "password1":password1,
+                "password2":password2,
+                "password3":password3,
+                "csrf_token":csrf_token
+            },
+            success:function(data){
+                if(data.code==200)
+                {
+                    xtalert.alertSuccess(data.data)
+                }
+                else{
+                    xtalert.alertError(data.data)
+                }
+
+            }
+        })
+
+    })
+})

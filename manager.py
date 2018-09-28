@@ -4,8 +4,8 @@ from flask_script import Manager
 from flask_migrate import Migrate,MigrateCommand
 from myproject import app
 from ext import db
-from apps.cms.model import User
-
+from apps.cms.model import User,role,role_user
+from apps.front.model import Front_USER
 # flask-script的使用
 manage = Manager(app)
 # 要使用flask-migrate必须绑定app和db
@@ -20,6 +20,15 @@ def adduser(email,username,password):
     user=User(email=email,username=username,password=password)
     db.session.add(user)
     db.session.commit()
+
+@manage.option("-r","--role_name",dest="role_name")
+@manage.option("-d","--desc",dest="desc")
+@manage.option("-p","--permis",dest="permis")
+def addrole(role_name,desc,permis):
+    r = role(role_name=role_name, desc=desc, permis=permis)
+    db.session.add(r)
+    db.session.commit()
+
 
 if __name__ == '__main__':
     manage.run()

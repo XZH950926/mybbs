@@ -21,3 +21,16 @@ SQLALCHEMY_MAX_OVERFLOW = 5 # 控制在连接池达到最大值后可以创建�
 SQLALCHEMY_POOL_TIMEOUT = 10 # 指定数据库连接池的超时时间。默认是 10。
 SECRET_KEY="dsfdgdsghds"
 SQLALCHEMY_TRACK_MODIFICATIONS=False  #如果设置成 True (默认情况)，Flask-SQLAlchemy 将会追踪对象的修改并且发送信号。这需要额外的内存，如果不必要的可以禁用它。
+
+# flask-mail
+MAIL_SERVER = 'smtp.qq.com'
+MAIL_PROT = 587
+MAIL_USE_TLS = True
+MAIL_USE_SSL = False
+MAIL_USERNAME = "1759455090@qq.com"
+MAIL_PASSWORD = "tfpierudrorahibe"  # 不是登录
+MAIL_DEFAULT_SENDER='1759455090@qq.com' # 默认的发件人
+
+#MAIL_USE_TLS 端口号 587
+#MAIL_USE_SSL 端口号 467
+# QQ邮箱不支持非加密方式发送邮件

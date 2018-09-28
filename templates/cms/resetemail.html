@@ -1,0 +1,23 @@
+{% extends "cms/base.html" %}
+{% block head %}
+    <script src="{{url_for("static",filename="cms/js/resetemail.js")}}">
+    </script>
+{% endblock %}
+{% block page_title %}
+修改邮箱
+{% endblock %}
+{% block content %}
+<form style="width:300px">
+  <div class="form-group" >
+    <label for="exampleInputEmail1">新邮箱</label>
+    <input type="email" class="form-control" id="exampleInputPassword1" placeholder="新邮箱">
+  </div>
+  <button type="submit" id="resetPwdBtn" class="btn btn-default">获取验证码</button>
+  <div class="form-group">
+    <label for="exampleInputFile">输入验证码</label>
+    <input type="password" class="form-control" id="exampleInputPassword3" placeholder="请输入验证码">
+  </div>
+  <button type="submit" id="resetPwdBtn1" class="btn btn-default">确认提交</button>
+</form>
+
+{% endblock %}
