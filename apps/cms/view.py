@@ -8,6 +8,7 @@ from apps.common.response import *
 from apps.common.memcached import *
 import string,random
 from functools import wraps
+from apps.common.model import Banner,Border
 bp=Blueprint("bp",__name__,url_prefix="/cms")
 
 def permisionresist(permis):
@@ -16,8 +17,11 @@ def permisionresist(permis):
         def inner(*args,**kwargs):
             user_id=session["user_id"]
             user = User.query.get(user_id)
-            r = user.checkpermission(permis)
-            func(*args,**kwargs)
+            r = user.checkPermision(permis)
+            if r:
+                return func(*args,**kwargs)
+            else:
+                return render_template("cms/login.html")
         return inner
     return outer
 
@@ -138,8 +142,134 @@ def send_checkcode():
     else:
         return jsonify(resFail(data=fm.err))
 
-class banner(MethodView):#轮播图管理
-    pass
+
+
+@bp.route("/banner/")
+@resistLogin
+@permisionresist(2)
+def banner():
+    banners=Banner.query.filter().all()
+    context={
+        "banners":banners
+    }
+    return render_template("cms/banner.html",**context)
+
+
+@bp.route("/addbanner/",methods=["post","get"])
+@resistLogin
+@permisionresist(2)
+def addbanner():
+    fm=bannerForm(formdata=request.form)
+    if fm.validate():
+
+        banner=Banner.query.filter(Banner.bannerName==fm.bannerName.data).first()
+        if banner:
+            return jsonify(resFail(data="这个轮播图已经存在"))
+        else:
+            banner=Banner(bannerName=fm.bannerName.data,imglink=fm.imglink.data,
+                          link=fm.link.data,priority=fm.priority.data)
+            db.session.add(banner)
+            db.session.commit()
+            return jsonify(resSuccess(data="添加轮播图成功"))
+    else:
+        return jsonify(resFail(fm.err))
+
+
+@bp.route("/deletebanner/",methods=["post"])
+@resistLogin
+@permisionresist(2)
+def deletebanner():
+   id=request.values.get("id")
+   banner=Banner.query.filter(Banner.id==id).first()
+   if banner:
+       db.session.delete(banner)
+       db.session.commit()
+       return jsonify(resSuccess(data="删除成功"))
+   else:
+       return jsonify(resFail(data="出错了"))
+
+
+
+@bp.route("/updatebanner/",methods=["post","get"])
+@resistLogin
+@permisionresist(2)
+def updatebanner():
+    fm=updatebannerForm(formdata=request.form)
+    if fm.validate():
+        banner=Banner.query.filter(Banner.id==fm.id.data).first()
+        if not banner:
+            return jsonify(resFail(data="这个轮播图不存在"))
+        else:
+            banner.bannerName=fm.bannerName.data
+            banner.link=fm.link.data
+            banner.imglink=fm.link.data
+            banner.priority=fm.priority.data
+            db.session.commit()
+            return jsonify(resSuccess(data="修改轮播图成功"))
+    else:
+        return jsonify(resFail(fm.err))
+
+@bp.route("/show_border/")
+@resistLogin
+@permisionresist(16)
+def show_border():
+    borders=Border.query.all()
+
+    context={
+        "borders":borders
+    }
+    return render_template("/cms/border.html",**context)
+
+@bp.route("/addborder/",methods=["post"])
+@resistLogin
+@permisionresist(16)
+def addborder():
+    fm=borderForm(formdata=request.form)
+    if fm.validate():
+        border=Border.query.filter(Border.borderName==fm.borderName.data).first()
+        if border:
+            return jsonify(resFail(data="这个板块名已经存在"))
+        else:
+            border=Border(borderName=fm.borderName.data)
+            db.session.add(border)
+            db.session.commit()
+            return jsonify(resSuccess(data="添加成功"))
+    else:
+        return jsonify(resFail(fm.err))
+
+@bp.route("/deleteborder/",methods=["post"])
+@resistLogin
+@permisionresist(16)
+def deleteborder():
+    id=request.values.get("id")
+    border=Border.query.filter(Border.id==id).first()
+    if border:
+        db.session.delete(border)
+        db.session.commit()
+        return jsonify(resSuccess(data="删除板块成功"))
+    else:
+        return jsonify(resFail(data="板块不存在"))
+
+
+@bp.route("/updateborder/",methods=["post"])
+@resistLogin
+@permisionresist(16)
+def updateborder():
+    print("cc")
+    fm=borderUpdateForm(formdata=request.form)
+    if fm.validate():
+        print("aa")
+        border=Border.query.filter(Border.id==fm.id.data).first()
+        if border:
+            border.borderName=fm.borderName.data
+            border.create_time=fm.create_time.data
+            db.session.commit()
+            return jsonify(resSuccess(data="修改成功"))
+        else:
+            return jsonify(resFail(data="出错了"))
+    else:
+        return jsonify(resFail(fm.err))
+
 
 
 bp.add_url_rule("/resetemail/",endpoint="resetemail",view_func=resetemail.as_view("resetemail"))
@@ -154,3 +284,4 @@ def getUser():
         return {"user":user}#会产生序列化问题
     else:
         return {}
+

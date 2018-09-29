@@ -12,13 +12,18 @@ import json
 from flask import make_response
 from apps.common.captcha.xtcaptcha import Captcha
 from apps.common.memcached import getmem,setmem,delete
+from apps.common.model import Banner
 #
 from ext import db
 bp = Blueprint('front',__name__)
 
 @bp.route("/")
 def loginView():
-    return render_template("front/index.html")
+    banners = Banner.query.order_by(Banner.priority.desc()).limit(4)
+    context={
+        "banners":banners
+    }
+    return render_template("front/index.html",**context)
 
 class Signup(MethodView):
     def get(self):

@@ -1,0 +1,113 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}
+    板块管理
+{% endblock %}
+
+{% block page_title %}
+    欢迎来到板块管理
+{% endblock %}
+{% block head %}
+    <script src="{{ url_for('static',filename='cms/js/border.js') }}"></script>
+{% endblock %}
+{% block  content %}
+    <div style="overflow: hidden">
+        <button class="btn btn-success btn-lg" data-toggle="modal" data-target="#myModal" id="addborder" style="float: right">添加板块
+        </button>
+    </div>
+    <table class="table table-hover table-bordered" style="text-align: center;table-layout:fixed">
+        <thead>
+        <tr>
+            <td>板块号</td>
+            <td>板块名</td>
+            <td>帖子数量</td>
+            <td>创建时间</td>
+            <td>操作</td>
+        </tr>
+        <tbody>
+        {% for border in borders %}
+            <tr>
+            <td style="word-wrap: break-word">{{ border.id }}</td>
+            <td style="word-wrap: break-word">{{ border.borderName }}</td>
+            <td style="word-wrap: break-word">{{ border.postNum }} ></td>
+            <td style="word-wrap: break-word">{{ border.create_time}}</td>
+            <td style="word-wrap: break-word">
+                <button class="btn btn-danger delete-btn" data-id="{{ border.id }}">删除</button>
+                <button class="btn btn-warning update-btn" data-toggle="modal" data-target="#updateModal"
+                        data-id="{{ border.id }}"
+                        data-borderName="{{border.borderName}}"
+                        data-postNum="{{ border.postNum }}"
+                        data-create_time="{{ border.create_time }}"
+                >更新</button>
+            </td>
+        </tr>
+            {% else %}
+                暂无数据
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+    <br>
+
+
+ <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <input type="hidden" value="" name="id" id="id">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="bannerName" class="col-sm-2 control-label">板块的名称</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="borderName" placeholder="请输入板块的名称">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" id="saveBorder" class="btn btn-primary" from="0">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <input type="hidden" value="" name="id" id="id">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="bannerName" class="col-sm-6 control-label">板块的名称</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="borderName1" placeholder="请输入板块的名称">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                 <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="bannerName" class="col-sm-2 control-label">板块的创建时间</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="create_time" placeholder="请输入板块的创建时间">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" id="saveBorder1" class="btn btn-primary" fromdata="">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

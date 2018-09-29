@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField,IntegerField
-from wtforms.validators import Email,InputRequired,Length,EqualTo
+from wtforms.validators import Email,InputRequired,Length,EqualTo,URL
 from apps.common.memcached import getmem
 from apps.common.response import *
 from apps.cms.model import *
@@ -36,3 +36,26 @@ class checkcode(Error):
         checkcode1=getmem(filed.data)
         if not checkcode or checkcode != filed.data.upper():
             return jsonify(resFail("请输入正确的验证码"))
+
+
+
+class bannerForm(Error):
+    bannerName=StringField(validators=[InputRequired(message="必须输入轮播图的名称"),])
+    imglink=StringField(validators=[URL(message="输入的必须是一个url")])
+    link=StringField(validators=[URL(message="输入的必须是一个url")])
+    priority=IntegerField(validators=[InputRequired(message="输入的必须是一个优先级")])
+
+class updatebannerForm(Error):
+    id =IntegerField(validators=[InputRequired(message="id必须是整形")])
+    bannerName = StringField(validators=[InputRequired(message="必须输入轮播图的名称"), ])
+    imglink = StringField(validators=[URL(message="输入的必须是一个url")])
+    link = StringField(validators=[URL(message="输入的必须是一个url")])
+    priority = IntegerField(validators=[InputRequired(message="输入的必须是一个优先级")])
+
+class borderForm(Error):
+    borderName=StringField(validators=[InputRequired(message="板块名不能为空")])
+
+class borderUpdateForm(Error):
+    id =IntegerField(validators=[InputRequired(message="id不能为空")])
+    borderName=StringField(validators=[InputRequired(message="板块名不能为空")])
+    create_time=StringField(validators=[InputRequired(message="时间不能为空")])

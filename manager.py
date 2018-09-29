@@ -6,6 +6,7 @@ from myproject import app
 from ext import db
 from apps.cms.model import User,role,role_user
 from apps.front.model import Front_USER
+from apps.common.model import Banner,Border
 # flask-script的使用
 manage = Manager(app)
 # 要使用flask-migrate必须绑定app和db

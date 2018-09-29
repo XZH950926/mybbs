@@ -55,7 +55,7 @@
                   {% endif %}
 
                     {% if user.checkPermision(2) %}
-                    <li class="nav-group post-manage"><a href="#">轮播图管理</a></li>
+                    <li class="nav-group post-manage"><a href="/cms/banner/">轮播图管理</a></li>
                     {% endif %}
               {% if user.checkPermision(4) %}
                     <li class="nav-group post-manage"><a href="#">帖子管理</a></li>
@@ -66,7 +66,7 @@
               {% endif %}
 
               {% if user.checkPermision(16) %}
-                    <li class="board-manage"><a href="#">板块管理</a></li>
+                    <li class="board-manage"><a href="/cms/show_border/">板块管理</a></li>
               {% endif %}
 
               {% if user.checkPermision(32) %}

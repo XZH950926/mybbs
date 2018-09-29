@@ -63,3 +63,4 @@ class User(db.Model):
         return check_password_hash(self._password,frontpwd)
 
 
+
