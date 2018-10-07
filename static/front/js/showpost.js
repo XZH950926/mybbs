@@ -1,10 +1,10 @@
 $(function () {
      var ue = UE.getEditor("editor",{
          'serverUrl': '/upload/',
-         toolbars: [
-                ['undo', 'formatmatch','source','selectall','horizontal'],
-                ['removeformat','fontsize','simpleupload','link']
-         ]
+         // toolbars: [
+         //        ['undo', 'formatmatch','source','selectall','horizontal'],
+         //        ['removeformat','fontsize','simpleupload','link']
+         // ]
      });
 
      // 发表评论

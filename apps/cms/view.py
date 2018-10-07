@@ -8,7 +8,7 @@ from apps.common.response import *
 from apps.common.memcached import *
 import string,random
 from functools import wraps
-from apps.common.model import Banner,Border
+from apps.common.model import Banner,Border,Post,Tag
 bp=Blueprint("bp",__name__,url_prefix="/cms")
 
 def permisionresist(permis):
@@ -269,6 +269,39 @@ def updateborder():
             return jsonify(resFail(data="出错了"))
     else:
         return jsonify(resFail(fm.err))
+
+@bp.route("/managepost/")
+def managepost():
+    posts=Post.query.all()
+    context={
+        "posts":posts
+    }
+    return render_template("cms/managepost.html",**context)
+
+@bp.route("/jiajin/",methods=["post"])
+def jiajin():
+   post_id=request.values.get("data_id")
+   if post_id:
+       post=Post.query.filter(Post.id==post_id).first()
+       if post:
+               tag=Tag(post=post,isTag=True)
+               db.session.add(tag)
+               db.session.commit()
+               return jsonify(resSuccess(data="加精成功"))
+   else:
+       return jsonify(resFail(data="加精失败"))
+
+
+@bp.route("/canel/",methods=["post"])
+def canel():
+    post_id = request.values.get("data_id")
+    tag=Tag.query.filter(Tag.post_id==post_id).first()
+    if tag:
+        tag.isTag=False
+        db.session.commit()
+        return jsonify(resSuccess(data="去除精华成功"))
+    else:
+        return jsonify(resFail(data="去除精华失败"))
 
 
 

@@ -12,7 +12,7 @@ import json
 from flask import make_response
 from apps.common.captcha.xtcaptcha import Captcha
 from apps.common.memcached import getmem,setmem,delete
-from apps.common.model import Banner,Border,Post,Common
+from apps.common.model import Banner,Border,Post,Common,Tag
 #
 from flask_paginate import Pagination,get_page_parameter
 from functools import wraps
@@ -38,16 +38,33 @@ def loginView():
     page1=request.args.get(get_page_parameter(),type=int,default=1)
     start=(page1-1)*3
     end=start+3
-
     border_id= request.values.get("border_id")
+    new=request.args.get("new")
+    views=request.args.get("views")
+    good=request.args.get("good")
+    jinhua=request.args.get("jinhua")
     if not border_id:
-        count = Post.query.count()
-        posts = Post.query.slice(start, end)
-        pagination = Pagination(bs_version=3, page=page1, total=count, per_page=3)
+        if views:
+            count = Post.query.count()
+            posts = Post.query.order_by(Post.views.desc(),Post.create_time.desc()).slice(start, end)
+            pagination = Pagination(bs_version=3, page=page1, total=count, per_page=3)
+        if jinhua:
+            count = Post.query.count()
+            posts = Post.query.outerjoin(Tag, Post.id == Tag.post_id).order_by(Tag.create_time.desc()).all()
+            pagination = Pagination(bs_version=3, page=page1, total=count, per_page=3)
+        else:
+            count = Post.query.count()
+            posts = Post.query.order_by( Post.create_time.desc()).slice(start, end)
+            pagination = Pagination(bs_version=3, page=page1, total=count, per_page=3)
     else:
-        posts = Post.query.filter(Post.border_id == border_id).slice(start,end)
-        count = Post.query.filter(Post.border_id == border_id).count()
-        pagination = Pagination(bs_version=3, page=page1, total=count, per_page=3)
+        if views:
+            posts = Post.query.filter(Post.border_id == border_id).order_by(Post.views.desc(),Post.create_time.desc()).slice(start,end)
+            count = Post.query.filter(Post.border_id == border_id).count()
+            pagination = Pagination(bs_version=3, page=page1, total=count, per_page=3)
+        else:
+            posts = Post.query.filter(Post.border_id == border_id).order_by(Post.create_time.desc()).slice(start, end)
+            count = Post.query.filter(Post.border_id == border_id).count()
+            pagination = Pagination(bs_version=3, page=page1, total=count, per_page=3)
 
     context={
         "banners":banners,
@@ -71,7 +88,6 @@ class Signup(MethodView):
     def post(self):
         fm=SignupFrom(formdata=request.form)
         if fm.validate():
-            print("aa")
             u=Front_USER(username=fm.username.data,password=fm.password.data,
                          telephone=fm.telephone.data)
             db.session.add(u)
@@ -213,7 +229,13 @@ def showpostcontent():
     post_id=request.values.get("post_id")
     post=Post.query.filter(Post.id==post_id).first()
     commons=Common.query.filter(Common.post_id==post_id)
-
+    if not post.views:
+        post.views=0
+        post.views+=1
+        db.session.commit()
+    else:
+        post.views+=1
+        db.session.commit()
     context={
         "post":post,
         "commons":commons

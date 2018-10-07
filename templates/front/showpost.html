@@ -2,9 +2,9 @@
 {% block title  %} 帖子详情  {% endblock %}
 {% block head %}
     <style>
-        img {
-            width: 100%;
-        }
+        {#img {#}
+        {#    width: 100%;#}
+        {#}#}
     </style>
  <!-- 配置文件 -->
     <script type="text/javascript" src="{{url_for('static',filename='ueditor/ueditor.config.js')}}"></script>
@@ -30,7 +30,7 @@
         </div>
         <div class="col-md-1"></div>
         <div class="col-md-3" style="text-align: center;border:1px solid; #e3e3e3height: 100%;padding-top: 100px">
-            <img style="width: 70px;height: 70px" src="{{url_for("static",filename='front/img/tuzi.jpg')}}" alt="">
+            <img style="width: 70px;height: 70px;border-radius: 50%" src="{{url_for("static",filename='front/img/tuzi.jpg')}}" alt="">
             <div style="font-size: 30px">{{ post.user.username}}</div>
         </div>
     </div>
@@ -38,21 +38,23 @@
          <form>
             <input type="hidden" name="post_id" id="post_id" value="{{post.id}}">
             <script id="editor" style="height: 200px" type="text/plain" > </script>
-            <button class='btn btn-success btn-lg' id='submit-common'>发表评论</button>
+            <button class='btn btn-success btn-lg col-sm-offset-5' id='submit-common'>发表评论</button>
         </form>
     </div>
     <div>
-        <ul>
+            <div class="panel panel-default col-sm-8 col-sm-offset-2">
+  <div class="panel-heading">
+    <h3 class="panel-title text-center">评论区</h3>
+  </div>
                 {% for common in commons %}
-                      <li>
-                        <div>{{ common.content|safe}}</div>
-                        <div><span style='margin:0px 30px'>{{ common.user.username}}</span>
-                        <span style='margin:0px 30px'>{{ common.create_time}}</span></div>
-                    </li>
+                    <div class="panel-body" style="border-bottom:black 1px solid;margin-bottom:10px">
+                        <div>评论内容:{{ common.content|safe}}</div>
+                        <div><span style='margin:0px 30px'>来自用户:{{ common.user.username}}</span>
+                        <span style='margin:0px 30px'>评论时间:{{ common.create_time}}</span></div>
+                    </div>
+                    {% else %}
+                    暂时没有评论,快去抢沙发吧!
                 {% endfor %}
-
-
-        </ul>
-
+</div>
     </div>
 {% endblock %}

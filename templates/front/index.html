@@ -133,10 +133,10 @@
 <div class="post-group">
         <div class="post-header" style="border-bottom: 1px solid #e6e6e6">
             <ul>
-                <li class="post-header-li"><a href="#">最新</a></li>
-                <li class="post-header-li"><a href="#">精华帖子</a></li>
-                <li class="post-header-li"><a href="#">点赞最多</a></li>
-                <li class="post-header-li"><a href="#">评论最多</a></li>
+                <li class="post-header-li"><a href="/?new=1">最新</a></li>
+                <li class="post-header-li"><a href="/?jinhua=2">精华帖子</a></li>
+                <li class="post-header-li"><a href="/?good=3">点赞最多</a></li>
+                <li class="post-header-li"><a href="/?views=4">阅读最多</a></li>
             </ul>
         </div>
         <div class="post-content">
@@ -149,11 +149,15 @@
                                  src="{{ url_for('static',filename='front/img/tuzi.jpg') }}">
                         </div>
                         <div style="float:left;padding-left: 20px">
-                            <div style="font-size: 18px;font-weight: 700">{{ post.title }}</div>
+                            {% if post.tag.isTag %}
+                            <div style="font-size: 18px;font-weight: 700;color:red">{{ post.title }}</div>
+                            {% else %}
+                            <div style="font-size: 18px;font-weight: 700;color:blue">{{ post.title }}</div>
+                            {% endif %}
                             <div><span style="padding-right: 20px">作者:{{ post.user.username}}</span>
                                 <span style="padding-right: 20px;padding-left: 20px">评论:10</span>
                                 <span style="padding-right: 20px;padding-left: 20px">时间:{{ post.create_time|convert}}</span>
-                                <span style="padding-right: 20px;padding-left: 20px">阅读:10</span>
+                                <span style="padding-right: 20px;padding-left: 20px">阅读:{{ post.views if post.views else 0 }}</span>
                             </div>
                         </div>
                     </li></a>
