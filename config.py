@@ -34,3 +34,14 @@ MAIL_DEFAULT_SENDER='1759455090@qq.com' # 默认的发件人
 #MAIL_USE_TLS 端口号 587
 #MAIL_USE_SSL 端口号 467
 # QQ邮箱不支持非加密方式发送邮件
+
+# 富文本编辑器上传七牛云
+import os
+
+UEDITOR_UPLOAD_PATH = os.path.join(os.path.dirname(__file__),'images')
+
+UEDITOR_UPLOAD_TO_QINIU = True
+UEDITOR_QINIU_ACCESS_KEY = "hvNEDY7K1pYh_hS0pGLGpztuHnE2UoAVcUTRHGYN"
+UEDITOR_QINIU_SECRET_KEY = "M_pJxubIeA71x6RoQ_Qk5mP55Gncy1Jks3qNalCn"
+UEDITOR_QINIU_BUCKET_NAME = "pjbbs1"
+UEDITOR_QINIU_DOMAIN = "pg438m4az.bkt.clouddn.com"

@@ -1,4 +1,4 @@
-from flask import Blueprint,request,session
+from flask import Blueprint,request,session,redirect
 from flask import render_template
 from flask.views import MethodView
 from apps.front.forms import *
@@ -12,16 +12,48 @@ import json
 from flask import make_response
 from apps.common.captcha.xtcaptcha import Captcha
 from apps.common.memcached import getmem,setmem,delete
-from apps.common.model import Banner
+from apps.common.model import Banner,Border,Post,Common
 #
+from flask_paginate import Pagination,get_page_parameter
+from functools import wraps
 from ext import db
 bp = Blueprint('front',__name__)
+
+
+#装饰器用来限制登录
+def outer(func):
+    @wraps(func)
+    def inner(*args,**kwargs):
+        if session.get("user_id",None):
+            return func(*args,**kwargs)
+        else:
+            return render_template("front/login.html")
+    return inner
 
 @bp.route("/")
 def loginView():
     banners = Banner.query.order_by(Banner.priority.desc()).limit(4)
+    borders=Border.query.all()
+
+    page1=request.args.get(get_page_parameter(),type=int,default=1)
+    start=(page1-1)*3
+    end=start+3
+
+    border_id= request.values.get("border_id")
+    if not border_id:
+        count = Post.query.count()
+        posts = Post.query.slice(start, end)
+        pagination = Pagination(bs_version=3, page=page1, total=count, per_page=3)
+    else:
+        posts = Post.query.filter(Post.border_id == border_id).slice(start,end)
+        count = Post.query.filter(Post.border_id == border_id).count()
+        pagination = Pagination(bs_version=3, page=page1, total=count, per_page=3)
+
     context={
-        "banners":banners
+        "banners":banners,
+        "borders":borders,
+        "posts":posts,
+        "pagination":pagination
     }
     return render_template("front/index.html",**context)
 
@@ -93,6 +125,8 @@ class signin(MethodView):
         if fm.validate():
             user=Front_USER.query.filter(Front_USER.telephone==fm.telephone.data).first()
             if user.checkPwd(fm.password.data):
+                session["user_id"]=user.id
+                session.permanent = True
                 return jsonify(resSuccess(data="登陆成功"))
             else:
                 return jsonify(resFail(data="密码出错了"))
@@ -136,7 +170,79 @@ def change_pwd_sms():
 
 
 
+class addpost(MethodView):
+    decorators = [outer]
+    def get(self):
+        borders=Border.query.all()
+        context={
+           "borders":borders
+        }
+        return render_template("front/addpost.html",**context)
+    def post(self):
+        fm=postForm(formdata=request.form)
+        if fm.validate():
+            user_id=session.get("user_id")
+            if user_id:
+                post=Post(title=fm.title.data,user_id=user_id,content=fm.content.data,border_id=fm.border_id.data)
+                db.session.add(post)
+                db.session.commit()
+                return jsonify(resSuccess(data="创建帖子成功"))
+            else:
+                return jsonify(resFail(data="请先登录"))
+        else:
+            return jsonify(resFail(fm.err))
 
+@bp.route("/logout/")
+def logout():
+    session.clear()
+    return render_template("front/login.html")
+
+
+@bp.context_processor
+def getUser():
+    user_id=session.get("user_id",None)
+    if user_id:
+        user=Front_USER.query.filter(Front_USER.id==user_id).first()
+        return {"user":user}
+    else:
+        return {"user":None}
+
+
+@bp.route("/showpostcontent/")
+def showpostcontent():
+    post_id=request.values.get("post_id")
+    post=Post.query.filter(Post.id==post_id).first()
+    commons=Common.query.filter(Common.post_id==post_id)
+
+    context={
+        "post":post,
+        "commons":commons
+    }
+    return render_template("front/showpost.html",**context)
+
+
+@outer
+@bp.route("/addcommon/",methods=["post"])
+def addcommon():
+    # 判断用户有没有登录
+    # 获取当前用户的id
+    user_id = session.get("user_id", None)
+    if not user_id:
+        return jsonify(resFail(data="请先登录"))
+    # 获取帖子的id
+    post_id = request.values.get("post_id")
+    # 获取评论的内容
+    content = request.values.get("content")
+    if not content:
+        return jsonify(resFail(data="评论不能为空"))
+    # 在数据库中插入
+    commom = Common(content=content, post_id=post_id, user_id=user_id)
+    db.session.add(commom)
+    db.session.commit()
+    return jsonify(resSuccess(data="评论成功"))
+
+
+bp.add_url_rule("/addpost/",endpoint="addpost",view_func=addpost.as_view("addpost"))
 bp.add_url_rule("/findpwd/",endpoint="findpwd",view_func=findpwd.as_view("findpwd"))
 bp.add_url_rule("/signup/",endpoint='signup',view_func=Signup.as_view('signup'))
 bp.add_url_rule("/signin/",endpoint="signin",view_func=signin.as_view("signin"))

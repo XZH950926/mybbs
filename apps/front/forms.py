@@ -68,6 +68,10 @@ class change_pwd(BaseForm):
         if code != filed.data.upper():
             return jsonify(resFail(data="请输入正确的短信验证码"))
 
+class postForm(BaseForm):
+    title = StringField(InputRequired(message="帖子标题不能为空"))
+    border_id = IntegerField(InputRequired(message="板块不能为空"))
+    content = StringField(InputRequired(message="帖子内容不能为空"))
 
 
 

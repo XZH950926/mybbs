@@ -3,6 +3,7 @@ import shortuuid
 from datetime import datetime
 from enum import Enum
 from werkzeug.security import generate_password_hash,check_password_hash
+
 class GenderEnum(Enum):
     MALE = 1
     FEMALE = 2
@@ -39,3 +40,5 @@ class Front_USER(db.Model):
     def checkPwd(self, frontpwd):
         # return self.password == generate_password_hash(frontpwd)
         return check_password_hash(self._password, frontpwd)
+
+
